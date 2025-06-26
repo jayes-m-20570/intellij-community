@@ -173,7 +173,19 @@ class StripeActionGroup: ActionGroup(), DumbAware {
 
     private fun getChildren(e: AnActionEvent?): List<AnAction> {
       val project = e?.project ?: return emptyList()
-      val children = ToolWindowsGroup.getToolWindowActions(project, false).map { ac ->
+      val children = mutableListOf<AnAction>()
+      
+      // Add shuffle action at the top
+      children.add(ShuffleToolWindowsAction())
+      
+      // Add separator if there are tool window actions
+      val toolWindowActions = ToolWindowsGroup.getToolWindowActions(project, false)
+      if (toolWindowActions.isNotEmpty()) {
+        children.add(Separator.getInstance())
+      }
+      
+      // Add tool window actions
+      children.addAll(toolWindowActions.map { ac ->
         object : AnActionWrapper(ac) {
           override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
           override fun update(e: AnActionEvent) {
@@ -182,7 +194,8 @@ class StripeActionGroup: ActionGroup(), DumbAware {
             e.presentation.putClientProperty(ActionUtil.INLINE_ACTIONS, listOf(TogglePinAction(ac.toolWindowId)))
           }
         }
-      }
+      })
+      
       return children
     }
 

@@ -1723,6 +1723,7 @@
 
     <group id="TopStripeActionGroup" class="com.intellij.toolWindow.StripeActionGroup"/>
     <action id="TopStripeEnableAction" class="com.intellij.toolWindow.EnableStripeGroup"/>
+    <action id="ShuffleToolWindows" class="com.intellij.toolWindow.ShuffleToolWindowsAction"/>
 
     <group id="MainToolbarQuickActionsRaw" searchable="false" popup="false">
       <group id="MainToolbarQuickActions.General" class="com.intellij.ide.ui.customization.ToolbarQuickActionsGroup" searchable="false"

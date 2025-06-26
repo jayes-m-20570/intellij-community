@@ -70,10 +70,32 @@ class ShuffleToolWindowsAction : AnAction("Shuffle Tool Windows", "Randomly reor
           val newOrder = originalOrders.getOrNull(index) ?: index
           val currentInfo = layout.getInfo(id)
           if (currentInfo != null && currentInfo.order != newOrder) {
+            // Use the public method to ensure proper state management
             toolWindowManager.setToolWindowAnchor(id, currentInfo.anchor, newOrder)
           }
         }
       }
+    }
+    
+    // Force update of the tool window panes to reflect changes
+    try {
+      toolWindowManager.project.let { project ->
+        val panes = mutableSetOf<String>()
+        toolWindowIds.forEach { id ->
+          layout.getInfo(id)?.let { info ->
+            panes.add(info.safeToolWindowPaneId)
+          }
+        }
+        panes.forEach { paneId ->
+          try {
+            toolWindowManager.getToolWindowPane(paneId).validateAndRepaint()
+          } catch (e: Exception) {
+            // Ignore errors for non-existent panes
+          }
+        }
+      }
+    } catch (e: Exception) {
+      // Fallback: don't fail if update fails
     }
   }
 }

@@ -18,6 +18,7 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.ModalityState
@@ -175,16 +176,23 @@ class StripeActionGroup: ActionGroup(), DumbAware {
       val project = e?.project ?: return emptyList()
       val children = mutableListOf<AnAction>()
       
-      // Add shuffle action at the top
-      children.add(ShuffleToolWindowsAction())
-      
-      // Add separator if there are tool window actions
-      val toolWindowActions = ToolWindowsGroup.getToolWindowActions(project, false)
-      if (toolWindowActions.isNotEmpty()) {
-        children.add(Separator.getInstance())
+      // Add shuffle action at the top if there are multiple tool windows
+      val shuffleAction = ShuffleToolWindowsAction()
+      if (e != null) {
+        shuffleAction.update(e)
+        if (shuffleAction.templatePresentation.isEnabledAndVisible) {
+          children.add(shuffleAction)
+        }
       }
       
       // Add tool window actions
+      val toolWindowActions = ToolWindowsGroup.getToolWindowActions(project, false)
+      
+      // Add separator if we have both shuffle and tool window actions
+      if (children.isNotEmpty() && toolWindowActions.isNotEmpty()) {
+        children.add(Separator.getInstance())
+      }
+      
       children.addAll(toolWindowActions.map { ac ->
         object : AnActionWrapper(ac) {
           override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT

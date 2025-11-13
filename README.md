@@ -2,6 +2,8 @@
 
 # IntelliJ IDEA Community Edition 
 
+> **🚀 New to the project? Check out [QUICKSTART.md](QUICKSTART.md) for a step-by-step guide to get up and running quickly!**
+
 These instructions will help you build IntelliJ IDEA Community Edition from source code, which is the basis for IntelliJ Platform development.
 The following conventions will be used to refer to directories on your machine:
 * `<USER_HOME>` is your home directory.
